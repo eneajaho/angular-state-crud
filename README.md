@@ -142,4 +142,8 @@ export class TodosComponent implements OnInit {
 }
 ```
 
+
+![image](https://user-images.githubusercontent.com/25394362/136675191-71680362-0e3e-4d09-91fd-103dd9dfd715.png)
+
+
 #### Built with Angular ❤️
