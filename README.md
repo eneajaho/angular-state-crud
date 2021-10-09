@@ -1,4 +1,5 @@
-# NgRx Component Store Crud
+# NgRx Component Store Crud      
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6b9b71d8-a9b1-49e9-9afa-19a47c7bfa59/deploy-status)](https://app.netlify.com/sites/component-store-crud/deploys)
 
 ### Features
 - Component Store for CRUD state
