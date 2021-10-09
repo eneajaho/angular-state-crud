@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { Todo } from './todo.model';
 import { Sort } from '@angular/material/sort/sort';
 
@@ -14,6 +13,7 @@ import { Sort } from '@angular/material/sort/sort';
     <div class="mat-elevation-z8">
       <table [dataSource]="todos" mat-table class="full-width-table" aria-label="Todos"
              matSort (matSortChange)="sorted.emit($event)">
+        
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
@@ -42,30 +42,26 @@ import { Sort } from '@angular/material/sort/sort';
     </div>
   `,
   styles: [ `
-      .full-width-table {
-          width: 100%;
-      }
-      
-      .loading-shade {
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 56px;
-          right: 0;
-          background: rgba(0, 0, 0, 0.15);
-          z-index: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      }
-
+    .full-width-table {
+        width: 100%;
+    }
+    
+    .loading-shade {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 56px;
+      right: 0;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   ` ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodosTableComponent {
-
-  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
   @Input() todos: Todo[] = [];
   @Input() totalRows = 0;

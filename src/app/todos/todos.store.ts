@@ -37,7 +37,6 @@ export class TodosStore extends ComponentStore<TodosState> {
   loadTodos = this.effect((payload$: Observable<Partial<GetTodosPayload>>) => payload$.pipe(
     tap(() => this.patchState({ loading: true, loaded: false, error: null })),
     switchMap(payload => {
-      console.log(payload);
       const currentPayload = this.get(s => s.params);
       const newPayload = { ...currentPayload, ...payload };
       return this.todosService.get(newPayload).pipe(tap({
