@@ -20,6 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 const routes: Routes = [
@@ -52,6 +53,7 @@ const routes: Routes = [
     MatInputModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
   ],
   bootstrap: [ AppComponent ]
 })

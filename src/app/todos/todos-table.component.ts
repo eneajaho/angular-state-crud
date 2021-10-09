@@ -2,32 +2,83 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { PageEvent } from '@angular/material/paginator';
 import { Todo } from './todo.model';
 import { Sort } from '@angular/material/sort/sort';
+import { animate, group, query, style, transition, trigger } from '@angular/animations';
+
+export const rowsAnimation = trigger('rowsAnimation', [
+  transition('completed <=> uncompleted', [
+    style({ background: 'rgba(103,58,183,0.37)' }),
+    animate('250ms', style({ background: '#fff' })),
+  ]),
+  transition(':enter',
+    query('.mat-cell', [
+      style({ opacity: '0', background: 'rgba(103,58,183,0.37)' }),
+      animate('250ms', style({ opacity: '1', background: '#fff' })),
+    ])
+  )
+]);
+
+export const rowRemoveAnimation = trigger('rowRemoveAnimation', [
+  transition('* => removed', group([
+    query('.mat-cell', [
+      style({ opacity: '1', background: 'rgba(246,0,0,0.11)', transform: 'translateX(0p)' }),
+      animate('300ms',
+        style({ opacity: '0', background: 'rgba(246,0,0,0.9)', transform: 'translateX(250px)' })
+      ),
+    ])
+  ])),
+]);
 
 @Component({
   selector: 'todos-table',
   template: `
-    <div class="loading-shade" *ngIf="loading">
-      <mat-spinner></mat-spinner>
-    </div>
-    
     <div class="mat-elevation-z8">
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
       <table [dataSource]="todos" mat-table class="full-width-table" aria-label="Todos"
              matSort (matSortChange)="sorted.emit($event)">
-        
-        <!-- Id Column -->
+
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
           <td mat-cell *matCellDef="let row">{{row.id}}</td>
         </ng-container>
 
-        <!-- Title Column -->
         <ng-container matColumnDef="title">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
           <td mat-cell *matCellDef="let row">{{row.title}}</td>
         </ng-container>
 
+        <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>UserId</th>
+          <td mat-cell *matCellDef="let row">{{ row.userId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="completed">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Completed</th>
+          <td mat-cell *matCellDef="let row">
+            <mat-icon
+              [color]="row.completed ? 'primary' : 'warn'"
+              (click)="todoToggled.emit(row)">
+              check_circle
+            </mat-icon>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-stroked-button color="warn" (click)="removeTodo(row)">
+              <mat-icon>delete</mat-icon>
+              <span>Remove</span>
+            </button>
+          </td>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row
+            [@rowRemoveAnimation]="row === removedTodo ? 'removed' : ''"
+            [@rowsAnimation]="row.completed ? 'completed' : 'uncompleted'"
+            *matRowDef="let row; columns: displayedColumns;">
+        </tr>
       </table>
 
       <mat-paginator
@@ -43,25 +94,20 @@ import { Sort } from '@angular/material/sort/sort';
   `,
   styles: [ `
     .full-width-table {
-        width: 100%;
+      width: 100%;
+      overflow: hidden;
     }
-    
-    .loading-shade {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 56px;
-      right: 0;
-      background: rgba(0, 0, 0, 0.15);
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    mat-icon {
+      cursor: pointer;
     }
   ` ],
+  animations: [ rowsAnimation, rowRemoveAnimation ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodosTableComponent {
+
+  removedTodo: Todo | null = null; // will be used to animate the removed todo
 
   @Input() todos: Todo[] = [];
   @Input() totalRows = 0;
@@ -70,7 +116,20 @@ export class TodosTableComponent {
   @Output() sorted = new EventEmitter<Sort>();
   @Output() pageChanged = new EventEmitter<PageEvent>();
 
+  @Output() todoToggled = new EventEmitter<Todo>();
+  @Output() todoRemoved = new EventEmitter<number>();
+
+  removeTodo(todo: Todo): void {
+    this.removedTodo = todo;
+
+    this.todoRemoved.emit(todo.id);
+
+    setTimeout(() => {
+      this.removedTodo = null;
+    }, 0);
+  }
+
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = [ 'id', 'title' ];
+  displayedColumns = [ 'id', 'title', 'user', 'completed', 'actions' ];
 
 }

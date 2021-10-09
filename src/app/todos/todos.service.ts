@@ -1,5 +1,5 @@
 import { environment } from "../../environments/environment";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Todo } from "./todo.model";
@@ -41,6 +41,26 @@ export class TodosService {
     return this.http.get<Todo[]>(path, { params });
 
     // _page=7&_limit=20&_sort=views&_order=asc _like=server  ?q=internet
+  }
+
+  add(todo: string): Observable<Todo> {
+    const path = `${environment.api}/todos`;
+    const payload = {
+      userId: Math.floor(Math.random() * 200),
+      title: todo  + Math.floor(Math.random() * 200),
+      completed: false
+    };
+    return this.http.post<Todo>(path, payload);
+  }
+
+  toggle(todo: Todo): Observable<Todo> {
+    const path = `${environment.api}/todos/${todo.id}`;
+    return this.http.put<Todo>(path, { ...todo, completed: !todo.completed });
+  }
+
+  remove(todoId: number): Observable<number> {
+    const path = `${environment.api}/todos/${todoId}`;
+    return this.http.delete<unknown>(path).pipe(map(res => todoId));
   }
 
 }

@@ -1,6 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
+import { TodosStore } from './todos/todos.store';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +13,8 @@ import { map, Observable, shareReplay } from 'rxjs';
           [opened]="(isHandset$ | async) === false">
         <mat-toolbar>Menu</mat-toolbar>
         <mat-nav-list>
-          <a mat-list-item href="#">Link 1</a>
-          <a mat-list-item href="#">Link 2</a>
+          <a mat-list-item routerLink="/">All todos</a>
+          <a mat-list-item (click)="store.addTodo('test')">Add todo</a>
           <a mat-list-item href="#">Link 3</a>
         </mat-nav-list>
       </mat-sidenav>
@@ -26,7 +27,7 @@ import { map, Observable, shareReplay } from 'rxjs';
             (click)="drawer.toggle()">
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
-          <span>component-store-crud</span>
+          <span>Component Store Todos</span>
         </mat-toolbar>
         <div class="container">
           <router-outlet></router-outlet>
@@ -68,6 +69,9 @@ export class AppComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) { }
+  constructor(
+    public store: TodosStore,
+    private breakpointObserver: BreakpointObserver
+  ) { }
 
 }
