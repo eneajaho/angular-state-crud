@@ -93,14 +93,19 @@ export const rowRemoveAnimation = trigger('rowRemoveAnimation', [
     </div>
   `,
   styles: [ `
-    .full-width-table {
-      width: 100%;
-      overflow: hidden;
-    }
+      .full-width-table {
+        width: 100%;
+        overflow: hidden;
+      }
 
-    mat-icon {
-      cursor: pointer;
-    }
+      /*.mat-row:hover .mat-cell {*/
+      /*  background: rgb(241 241 241);*/
+      /*  transition: 0.25s background;*/
+      /*}*/
+
+      mat-icon {
+        cursor: pointer;
+      }
   ` ],
   animations: [ rowsAnimation, rowRemoveAnimation ],
   changeDetection: ChangeDetectionStrategy.OnPush

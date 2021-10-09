@@ -15,7 +15,6 @@ import { TodosStore } from './todos/todos.store';
         <mat-nav-list>
           <a mat-list-item routerLink="/">All todos</a>
           <a mat-list-item (click)="store.addTodo('test')">Add todo</a>
-          <a mat-list-item href="#">Link 3</a>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>
