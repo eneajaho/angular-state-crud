@@ -21,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { TruncatePipe } from './truncate.pipe';
 
 
 const routes: Routes = [
@@ -33,7 +34,8 @@ const routes: Routes = [
     AppComponent,
     TodosComponent,
     TodosFilterComponent,
-    TodosTableComponent
+    TodosTableComponent,
+    TruncatePipe
   ],
   imports: [
     BrowserModule,

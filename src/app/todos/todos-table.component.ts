@@ -44,19 +44,20 @@ export const rowRemoveAnimation = trigger('rowRemoveAnimation', [
 
         <ng-container matColumnDef="title">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-          <td mat-cell *matCellDef="let row">{{row.title}}</td>
+          <td mat-cell *matCellDef="let row">{{ row.title | truncate: 50 }}</td>
         </ng-container>
 
         <ng-container matColumnDef="user">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>UserId</th>
-          <td mat-cell *matCellDef="let row">{{ row.userId }}</td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+          <!--<td mat-cell *matCellDef="let row">{{ row.userId }}</td>-->
+          <td mat-cell *matCellDef="let row">John</td>
         </ng-container>
 
         <ng-container matColumnDef="completed">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Completed</th>
           <td mat-cell *matCellDef="let row">
             <mat-icon
-              [color]="row.completed ? 'primary' : 'warn'"
+              [style.color]="row.completed ? '#00bb00' : 'grey'"
               (click)="todoToggled.emit(row)">
               check_circle
             </mat-icon>
