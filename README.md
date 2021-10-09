@@ -1,27 +1,145 @@
-# ComponentStoreCrud
+# NgRx Component Store Crud
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.9.
+### Features
+- Component Store for CRUD state
+- Smart / Dumb component architecture
+- Angular Material components 
+- Table animations (on add, update, remove)
+- Error, Loading state handling
 
-## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Code parts
 
-## Code scaffolding
+#### TodosStore
+```ts
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+@Injectable({ providedIn: 'root' })
+export class TodosStore extends ComponentStore<TodosState> {
 
-## Build
+  constructor(private todosService: TodosService) {
+    super(initialState);
+  }
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+  loadTodos = this.effect((payload$: Observable<Partial<GetTodosPayload>>) => payload$.pipe(
+    tap(() => this.patchState({ loading: true, loaded: false, error: null })),
+    switchMap(payload => {
+      const currentPayload = this.get(s => s.params);
+      const newPayload = { ...currentPayload, ...payload };
+      return this.todosService.get(newPayload).pipe(
+        tap((data: Todo[]) =>
+          this.patchState({
+            data, error: null, loading: false, loaded: true, params: newPayload,
+            total: 100 // this should be retrieved from headers, or most of the time will come with the response body
+          })
+        ),
+        catchError(error => {
+          this.patchState({
+            error, data: [], loading: false, loaded: false, params: initialState.params
+          });
+          return EMPTY; // we return EMPTY in order to keep the effect observable alive
+        })
+      );
+    })
+  ));
 
-## Running unit tests
+  addTodo = this.effect((title$: Observable<string>) => title$.pipe(
+    concatMap(todoTitle => this.todosService.add(todoTitle).pipe(
+      tap(todo => {
+        const todos = this.get(s => s.data);
+        todos.unshift(todo);
+        this.patchState({ data: [ ...todos ] })
+      }),
+      catchError(error => {
+        console.error('Cannot add todo with title: ' + todoTitle, error);
+        return EMPTY;
+      })
+    ))
+  ));
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  updateTodo = this.effect((todo$: Observable<Todo>) => todo$.pipe(
+    concatMap(todo => this.todosService.toggle(todo).pipe(
+      tap(todo => {
+        const todos = this.get(s => s.data);
+        this.patchState({
+          // data: todos.map(x => x.id === todo.id ? { ...x, ...todo } : x)
+          // in order to not loose the reference of the item and reanimate the enter transition
+          // we dont change the reference of the item but only the needed key
+          data: todos.map(item => {
+            if (item.id === todo.id) {
+              item.completed = todo.completed;
+            }
+            return item;
+          })
+        })
+      }),
+      catchError(error => {
+        console.error('Cannot update todo with ID: ' + todo.id, error);
+        return EMPTY;
+      })
+    ))
+  ));
 
-## Running end-to-end tests
+  removeTodo = this.effect((todoId$: Observable<number>) => todoId$.pipe(
+    concatMap(todoId => this.todosService.remove(todoId).pipe(
+      tap(todoId => {
+        const todos = this.get(s => s.data);
+        this.patchState({
+          data: todos.filter(x => x.id !== todoId)
+        })
+      }),
+      catchError(error => {
+        console.error('Cannot delete todo with ID: ' + todoId, error);
+        return EMPTY;
+      })
+    ))
+  ));
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+}
 
-## Further help
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+
+#### Todos component 
+```html
+<ng-container *ngIf="store.state$ | async as vm">
+ 
+  <todos-filter 
+    (filtered)="store.loadTodos({ searchQuery: $event })">
+  </todos-filter>
+  
+  <todos-table
+    [todos]="vm.data" 
+    [totalRows]="vm.total"
+    [loading]="vm.loading"
+    (pageChanged)="store.loadTodos($event)"
+    (sorted)="store.loadTodos({ sort: $event })"
+    (todoToggled)="store.updateTodo($event)"
+    (todoRemoved)="store.removeTodo($event)">
+  </todos-table>
+  
+  <div *ngIf="vm.error">
+    Error: {{ vm.error }}
+  </div>
+  
+</ng-container>
+```
+
+```ts
+@Component({
+  selector: 'todos',
+  template: `...`,
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class TodosComponent implements OnInit {
+
+  constructor(public store: TodosStore) {}
+
+  ngOnInit() {
+    this.store.loadTodos({ pageSize: 10, pageIndex: 1 });
+  }
+  
+}
+```
+
+#### Built with Angular ❤️

@@ -48,7 +48,7 @@ export class TodosStore extends ComponentStore<TodosState> {
         ),
         catchError(error => {
           this.patchState({
-            error, data: [], loading: false, loaded: false, params: initialState.params
+            error: error.message, data: [], loading: false, loaded: false, params: initialState.params
           });
           return EMPTY; // we return EMPTY in order to keep the effect observable alive
         })

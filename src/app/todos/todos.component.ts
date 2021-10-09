@@ -21,7 +21,7 @@ import { TodosStore } from './todos.store';
       </todos-table>
       
       <div *ngIf="vm.error">
-        Error: {{ $any(vm.error).message }}
+        Error: {{ vm.error }}
       </div>
       
     </ng-container>
