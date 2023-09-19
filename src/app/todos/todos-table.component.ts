@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Todo } from './todo.model';
-import { Sort } from '@angular/material/sort/sort';
+import { Sort } from '@angular/material/sort';
 import { animate, group, query, style, transition, trigger } from '@angular/animations';
 
 export const rowsAnimation = trigger('rowsAnimation', [
