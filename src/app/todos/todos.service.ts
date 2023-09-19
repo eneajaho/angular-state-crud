@@ -3,7 +3,7 @@ import { map, Observable } from "rxjs";
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Todo } from "./todo.model";
-import { Sort } from '@angular/material/sort/sort';
+import { Sort } from '@angular/material/sort';
 
 export interface GetTodosPayload {
   searchQuery: string;
