@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 
 @Component({
   selector: 'todos-filter',
@@ -36,7 +36,7 @@ import { FormControl } from '@angular/forms';
 })
 export class TodosFilterComponent {
 
-  searchControl = new FormControl();
+  searchControl = new UntypedFormControl();
 
   @Output() filtered = new EventEmitter<string>();
 
