@@ -1,32 +1,15 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { Todo } from './todo.model';
-import { Sort } from '@angular/material/sort';
-import { animate, group, query, style, transition, trigger } from '@angular/animations';
+import {MatSortModule, Sort} from '@angular/material/sort';
+import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
+import {rowRemoveAnimation, rowsAnimation} from "../animations/table-animations";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {NgIf} from "@angular/common";
+import {MatTableModule} from "@angular/material/table";
+import {TruncatePipe} from "../truncate.pipe";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
-export const rowsAnimation = trigger('rowsAnimation', [
-  transition('completed <=> uncompleted', [
-    style({ background: 'rgba(103,58,183,0.37)' }),
-    animate('250ms', style({ background: '#fff' })),
-  ]),
-  transition(':enter',
-    query('.mat-cell', [
-      style({ opacity: '0', background: 'rgba(103,58,183,0.37)' }),
-      animate('250ms', style({ opacity: '1', background: '#fff' })),
-    ])
-  )
-]);
-
-export const rowRemoveAnimation = trigger('rowRemoveAnimation', [
-  transition('* => removed', group([
-    query('.mat-cell', [
-      style({ opacity: '1', background: 'rgba(246,0,0,0.11)', transform: 'translateX(0p)' }),
-      animate('300ms',
-        style({ opacity: '0', background: 'rgba(246,0,0,0.9)', transform: 'translateX(250px)' })
-      ),
-    ])
-  ])),
-]);
 
 @Component({
   selector: 'todos-table',
@@ -93,7 +76,7 @@ export const rowRemoveAnimation = trigger('rowRemoveAnimation', [
       </mat-paginator>
     </div>
   `,
-  styles: [ `
+  styles: `
       .full-width-table {
         width: 100%;
         overflow: hidden;
@@ -107,9 +90,20 @@ export const rowRemoveAnimation = trigger('rowRemoveAnimation', [
       mat-icon {
         cursor: pointer;
       }
-  ` ],
+  `,
   animations: [ rowsAnimation, rowRemoveAnimation ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatProgressBarModule,
+    NgIf,
+    MatTableModule,
+    MatSortModule,
+    TruncatePipe,
+    MatIconModule,
+    MatButtonModule,
+    MatPaginatorModule
+  ]
 })
 export class TodosTableComponent {
 

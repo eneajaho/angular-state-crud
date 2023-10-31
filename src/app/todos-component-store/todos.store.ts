@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { ComponentStore } from "@ngrx/component-store";
 import { catchError, concatMap, EMPTY, Observable, switchMap, tap } from "rxjs";
 import { Todo } from "./todo.model";
-import { GetTodosPayload, TodosService } from "./todos.service";
+import { GetTodosPayload, TodosService } from "../todos.service";
 
 export interface TodosState {
   data: Todo[];
