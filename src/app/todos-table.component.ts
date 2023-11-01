@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { Todo } from './todo.model';
 import {MatSortModule, Sort} from '@angular/material/sort';
 import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
-import {rowRemoveAnimation, rowsAnimation} from "../animations/table-animations";
+import {rowRemoveAnimation, rowsAnimation} from "./animations/table-animations";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {NgIf} from "@angular/common";
 import {MatTableModule} from "@angular/material/table";
-import {TruncatePipe} from "../truncate.pipe";
+import {TruncatePipe} from "./truncate.pipe";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 

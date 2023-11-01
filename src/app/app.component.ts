@@ -1,7 +1,6 @@
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import {Component, inject} from '@angular/core';
 import {map, Observable, shareReplay} from 'rxjs';
-import {TodosStore} from './todos-component-store/todos.store';
 import {RouterLink, RouterOutlet} from "@angular/router";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSidenavModule} from "@angular/material/sidenav";
@@ -21,7 +20,8 @@ import {AsyncPipe} from "@angular/common";
                 <mat-toolbar>Menu</mat-toolbar>
                 <mat-nav-list>
                     <a mat-list-item routerLink="/">All todos</a>
-                    <a mat-list-item (click)="store.addTodo('test')">Add todo</a>
+                    <a mat-list-item routerLink="/component-store">Component Store</a>
+                    <a mat-list-item routerLink="/rx-state">RxState</a>
                 </mat-nav-list>
             </mat-sidenav>
             <mat-sidenav-content>
@@ -78,7 +78,6 @@ import {AsyncPipe} from "@angular/common";
     ]
 })
 export class AppComponent {
-    store = inject(TodosStore);
     private breakpointObserver = inject(BreakpointObserver);
 
     isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)

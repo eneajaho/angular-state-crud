@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { TodosStore } from './todos.store';
-import {TodosTableComponent} from "./todos-table.component";
-import {TodosFilterComponent} from "./todos-filter.component";
+import {ComponentStoreTodosStore} from './todos.store';
+import {TodosTableComponent} from "../todos-table.component";
+import {TodosFilterComponent} from "../todos-filter.component";
 import {AsyncPipe, NgIf} from "@angular/common";
 
 @Component({
@@ -38,9 +38,9 @@ import {AsyncPipe, NgIf} from "@angular/common";
   ],
   standalone: true
 })
-export class TodosComponent implements OnInit {
+export class ComponentStoreTodosComponent implements OnInit {
 
-  constructor(public store: TodosStore) {}
+  constructor(public store: ComponentStoreTodosStore) {}
 
   ngOnInit() {
     this.store.loadTodos({ pageSize: 10, pageIndex: 1 });

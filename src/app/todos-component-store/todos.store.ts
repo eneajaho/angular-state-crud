@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ComponentStore } from "@ngrx/component-store";
 import { catchError, concatMap, EMPTY, Observable, switchMap, tap } from "rxjs";
-import { Todo } from "./todo.model";
+import { Todo } from "../todo.model";
 import { GetTodosPayload, TodosService } from "../todos.service";
 
 export interface TodosState {
@@ -28,7 +28,7 @@ const initialState: TodosState = {
 }
 
 @Injectable({ providedIn: 'root' })
-export class TodosStore extends ComponentStore<TodosState> {
+export class ComponentStoreTodosStore extends ComponentStore<TodosState> {
 
   constructor(private todosService: TodosService) {
     super(initialState);

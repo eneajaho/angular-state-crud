@@ -7,13 +7,13 @@ import {MatIconModule} from "@angular/material/icon";
 @Component({
     selector: 'todos-filter',
     template: `
-        <form>
-            <mat-form-field appearance="fill">
+        <form (submit)="$event.preventDefault(); filtered.emit(searchControl.value)">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Search query</mat-label>
                 <input matInput [formControl]="searchControl" placeholder="Search todos...">
             </mat-form-field>
 
-            <button mat-raised-button color="primary" type="button"
+            <button mat-raised-button color="primary" type="button" 
                     (click)="filtered.emit(searchControl.value)">
                 <mat-icon>search</mat-icon>
                 <span>Search</span>
@@ -21,21 +21,13 @@ import {MatIconModule} from "@angular/material/icon";
         </form>
     `,
     styles: `
-    form {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-        
-        button {
-          margin-bottom: 15px;
-          margin-left: 15px;
-            
-            mat-icon {
-                margin-right: 4px;
-            }
+        form {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 20px;
         }
-    }
-  `,
+    `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
