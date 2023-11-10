@@ -10,7 +10,7 @@ import { map } from "rxjs";
   template: `
     <todos-filter
       [searchValue]="store.searchQuery()"
-      (filtered)="store.actions.loadTodos({ searchQuery: $event })"
+      (filtered)="setSearchParam($event)"
     />
 
     @if (store.error()) {

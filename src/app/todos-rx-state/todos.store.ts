@@ -51,15 +51,14 @@ export class RxStateTodosStore {
     removeTodo: number;
   }>();
 
-  state = rxState<TodosState>(({ set, connect, select }) => {
+  state = rxState<TodosState>(({ set, connect, get, select }) => {
     set(initialState);
 
     connect(
       this.actions.loadTodos$.pipe(
-        startWith({ loading: true, loaded: false, error: null }),
-        withLatestFrom(this.actions.loadTodos$, select("params")),
-        switchMap(([, payload, params]) => {
-          const newPayload = { ...params, ...payload };
+        switchMap((payload) => {
+          set((s) => ({ loading: true, loaded: false, error: null }));
+          const newPayload = { ...get("params"), ...payload };
           return this.todosService.get(newPayload).pipe(
             map((data: Todo[]) => ({
               data,
