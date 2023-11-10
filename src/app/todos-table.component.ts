@@ -1,33 +1,51 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { Todo } from './todo.model';
-import {MatSortModule, Sort} from '@angular/material/sort';
-import {MatPaginatorModule, PageEvent} from "@angular/material/paginator";
-import {rowRemoveAnimation, rowsAnimation} from "./animations/table-animations";
-import {MatProgressBarModule} from "@angular/material/progress-bar";
-import {NgIf} from "@angular/common";
-import {MatTableModule} from "@angular/material/table";
-import {TruncatePipe} from "./truncate.pipe";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from "@angular/core";
+import { Todo } from "./todo.model";
+import { MatSortModule, Sort } from "@angular/material/sort";
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { NgIf } from "@angular/common";
+import { MatTableModule } from "@angular/material/table";
+import { TruncatePipe } from "./truncate.pipe";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
-  selector: 'todos-table',
+  selector: "todos-table",
   template: `
     <div class="mat-elevation-z8">
       <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
-      <table [dataSource]="todos" mat-table class="full-width-table" aria-label="Todos"
-             matSort (matSortChange)="sorted.emit($event)">
-
+      <table
+        [dataSource]="todos"
+        mat-table
+        class="full-width-table"
+        aria-label="Todos"
+        matSort
+        (matSortChange)="sorted.emit($event)"
+      >
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-          <td mat-cell *matCellDef="let row">{{row.id}}</td>
+          <td mat-cell *matCellDef="let row">
+            @if (row.isChanging) {
+            <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+            {{ row.id }}
+            }
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="title">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-          <td mat-cell *matCellDef="let row">{{ row.title | truncate: 50 }}</td>
+          <td mat-cell *matCellDef="let row">
+            {{ row.title | truncate : 50 }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="user">
@@ -41,7 +59,8 @@ import {MatButtonModule} from "@angular/material/button";
           <td mat-cell *matCellDef="let row">
             <mat-icon
               [style.color]="row.completed ? '#00bb00' : 'grey'"
-              (click)="todoToggled.emit(row)">
+              (click)="!row.isChanging ? todoToggled.emit(row) : ''"
+            >
               check_circle
             </mat-icon>
           </td>
@@ -50,7 +69,12 @@ import {MatButtonModule} from "@angular/material/button";
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
           <td mat-cell *matCellDef="let row">
-            <button mat-stroked-button color="warn" (click)="removeTodo(row)">
+            <button
+              mat-stroked-button
+              color="warn"
+              [disabled]="row.isChanging"
+              (click)="todoRemoved.emit(row.id)"
+            >
               <mat-icon>delete</mat-icon>
               <span>Remove</span>
             </button>
@@ -58,11 +82,11 @@ import {MatButtonModule} from "@angular/material/button";
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row
-            [@rowRemoveAnimation]="row === removedTodo ? 'removed' : ''"
-            [@rowsAnimation]="row.completed ? 'completed' : 'uncompleted'"
-            *matRowDef="let row; columns: displayedColumns;">
-        </tr>
+        <tr
+          mat-row
+          [class.is-changing]="row.isChanging"
+          *matRowDef="let row; columns: displayedColumns"
+        ></tr>
       </table>
 
       <mat-paginator
@@ -72,7 +96,8 @@ import {MatButtonModule} from "@angular/material/button";
         [showFirstLastButtons]="true"
         (page)="pageChanged.emit($event)"
         [pageSizeOptions]="[5, 10, 20]"
-        aria-label="Select page">
+        aria-label="Select page"
+      >
       </mat-paginator>
     </div>
   `,
@@ -82,16 +107,15 @@ import {MatButtonModule} from "@angular/material/button";
         overflow: hidden;
       }
 
-      /*.mat-row:hover .mat-cell {*/
-      /*  background: rgb(241 241 241);*/
-      /*  transition: 0.25s background;*/
-      /*}*/
-
       mat-icon {
         cursor: pointer;
       }
+
+      .is-changing {
+        background: #673ab73b;
+        transition: 0.25s background;
+      }
   `,
-  animations: [ rowsAnimation, rowRemoveAnimation ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -102,14 +126,12 @@ import {MatButtonModule} from "@angular/material/button";
     TruncatePipe,
     MatIconModule,
     MatButtonModule,
-    MatPaginatorModule
-  ]
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
+  ],
 })
 export class TodosTableComponent {
-
-  removedTodo: Todo | null = null; // will be used to animate the removed todo
-
-  @Input() todos: Todo[] = [];
+  @Input() todos: (Todo & { isChanging?: boolean })[] = [];
   @Input() totalRows = 0;
   @Input() loading = false;
 
@@ -119,17 +141,6 @@ export class TodosTableComponent {
   @Output() todoToggled = new EventEmitter<Todo>();
   @Output() todoRemoved = new EventEmitter<number>();
 
-  removeTodo(todo: Todo): void {
-    this.removedTodo = todo;
-
-    this.todoRemoved.emit(todo.id);
-
-    setTimeout(() => {
-      this.removedTodo = null;
-    }, 0);
-  }
-
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = [ 'id', 'title', 'user', 'completed', 'actions' ];
-
+  displayedColumns = ["id", "title", "user", "completed", "actions"];
 }

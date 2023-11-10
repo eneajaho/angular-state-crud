@@ -1,94 +1,133 @@
-import {inject, Injectable} from "@angular/core";
-import {rxState} from "@rx-angular/state"
-import {catchError, concatMap, map, of, switchMap, tap} from "rxjs";
-import {GetTodosPayload, TodosService} from "../todos.service";
-import {rxActions} from "@rx-angular/state/actions";
-import {Todo} from "../todo.model";
+import { inject, Injectable } from "@angular/core";
+import { rxState } from "@rx-angular/state";
+import {
+  catchError,
+  concatMap,
+  map,
+  mergeMap,
+  of,
+  startWith,
+  switchMap,
+  withLatestFrom,
+} from "rxjs";
+import { GetTodosPayload, TodosService } from "../todos.service";
+import { rxActions } from "@rx-angular/state/actions";
+import { insert, remove } from "@rx-angular/cdk/transformations";
+import { Todo } from "../todo.model";
 
 export interface TodosState {
-    data: Todo[];
-    params: GetTodosPayload,
-    total: number;
-    loading: boolean;
-    loaded: boolean;
-    error: string | null;
+  data: Todo[];
+  isChanging: number[];
+  params: Partial<GetTodosPayload>;
+  total: number;
+  loading: boolean;
+  loaded: boolean;
+  error: string | null;
 }
 
 const initialState: TodosState = {
-    data: [],
-    params: {
-        pageIndex: 0,
-        pageSize: 0,
-        sort: null,
-        searchQuery: '',
-    },
-    total: 0,
-    loaded: false,
-    loading: false,
-    error: null,
-}
+  data: [],
+  isChanging: [],
+  params: {
+    pageIndex: 1,
+    pageSize: 10,
+    sort: null,
+    searchQuery: "",
+  },
+  total: 0,
+  loaded: false,
+  loading: false,
+  error: null,
+};
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: "root" })
 export class RxStateTodosStore {
-    private todosService = inject(TodosService);
+  private todosService = inject(TodosService);
 
-    actions = rxActions<{
-        loadTodos: Partial<GetTodosPayload>,
-        addTodo: string,
-        updateTodo: Todo,
-        removeTodo: number,
-    }>();
+  actions = rxActions<{
+    loadTodos: Partial<GetTodosPayload>;
+    addTodo: string;
+    updateTodo: Todo;
+    removeTodo: number;
+  }>();
 
-    state = rxState<TodosState>(({set, connect, get}) => {
-        set(initialState);
+  state = rxState<TodosState>(({ set, connect, select }) => {
+    set(initialState);
 
-        connect(
-            this.actions.loadTodos$.pipe(
-                tap(() => set({loading: true, loaded: false, error: null})),
-                switchMap(payload => {
-                    const currentParams = get('params');
-                    const newPayload = {...currentParams, ...payload};
-                    return this.todosService.get(newPayload).pipe(
-                        map((data: Todo[]) => ({
-                            data, error: null, loading: false,
-                            loaded: true, params: newPayload, total: 100
-                        })),
-                        catchError(err => of({ error: err.message })
-                    ));
-                }),
-            ),
-        );
+    connect(
+      this.actions.loadTodos$.pipe(
+        startWith({ loading: true, loaded: false, error: null }),
+        withLatestFrom(this.actions.loadTodos$, select("params")),
+        switchMap(([, payload, params]) => {
+          const newPayload = { ...params, ...payload };
+          return this.todosService.get(newPayload).pipe(
+            map((data: Todo[]) => ({
+              data,
+              error: null,
+              loading: false,
+              loaded: true,
+              params: newPayload,
+              total: 100,
+            })),
+            catchError((err) => of({ error: err.message }))
+          );
+        })
+      )
+    );
 
-        connect(
-            'data',
-            this.actions.addTodo$.pipe(
-                concatMap(payload => this.todosService.add(payload))
-            ),
-            (state, todo) => {
-                state.data.unshift(todo);
-                return state.data;
-            }
-        );
+    connect(
+      "data",
+      this.actions.addTodo$.pipe(
+        concatMap((payload) => this.todosService.add(payload))
+      ),
+      (state, todo) => {
+        state.data.unshift(todo);
+        return state.data;
+      }
+    );
 
-        connect(
-            'data',
-            this.actions.updateTodo$.pipe(
-                concatMap(payload => this.todosService.toggle(payload))
-            ),
-            (state, todo) => state.data.map(item => {
-                if (todo.id === item.id) {
-                    item.completed = todo.completed;
-                }
-                return item;
-            })
-        );
+    connect(
+      this.actions.updateTodo$.pipe(
+        mergeMap((todo) => {
+          set((s) => ({ isChanging: insert(s.isChanging, todo.id) }));
+          return this.todosService.toggle(todo);
+        })
+      ),
+      (state, todo) => {
+        return {
+          data: state.data.map((item) => ({
+            ...item,
+            completed: item.id === todo.id ? todo.completed : item.completed,
+          })),
+          isChanging: remove(state.isChanging, todo.id),
+        };
+      }
+    );
 
-        connect(
-            'data',
-            this.actions.removeTodo$.pipe(
-                concatMap(payload => this.todosService.remove(payload))
-            ),
-            (state, todoId) => state.data.filter(x => x.id !== todoId)
-        );
-    });
+    connect(
+      this.actions.removeTodo$.pipe(
+        concatMap((todoId) => {
+          set((s) => ({ isChanging: insert(s.isChanging, todoId) }));
+          return this.todosService.remove(todoId);
+        })
+      ),
+      (state, todoId) => ({
+        ...this.state,
+        data: remove(state.data, [], (item) => item.id === todoId),
+        isChanging: remove(state.isChanging, todoId),
+      })
+    );
+  });
+
+  data = this.state.computed(({ isChanging, data }) =>
+    data().map((item) => ({
+      ...item,
+      isChanging: isChanging().includes(item.id),
+    }))
+  );
+
+  total = this.state.signal("total");
+  error = this.state.signal("error");
+  loading = this.state.signal("loading");
+  searchQuery = this.state.computed(({ params }) => params().searchQuery || "");
 }

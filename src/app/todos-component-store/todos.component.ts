@@ -1,49 +1,53 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import {ComponentStoreTodosStore} from './todos.store';
-import {TodosTableComponent} from "../todos-table.component";
-import {TodosFilterComponent} from "../todos-filter.component";
-import {AsyncPipe, NgIf} from "@angular/common";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { ComponentStoreTodosStore } from "./todos.store";
+import { TodosTableComponent } from "../todos-table.component";
+import { TodosFilterComponent } from "../todos-filter.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { map } from "rxjs";
 
 @Component({
-  selector: 'todos',
+  selector: "todos",
   template: `
-    <ng-container *ngIf="store.state$ | async as vm">
+    <todos-filter
+      [searchValue]="store.searchQuery()"
+      (filtered)="setSearchParam($event)"
+    />
 
-      <todos-filter
-          (filtered)="store.loadTodos({ searchQuery: $event })">
-      </todos-filter>
-
-      <todos-table
-          [todos]="vm.data"
-          [totalRows]="vm.total"
-          [loading]="vm.loading"
-          (pageChanged)="store.loadTodos($event)"
-          (sorted)="store.loadTodos({ sort: $event })"
-          (todoToggled)="store.updateTodo($event)"
-          (todoRemoved)="store.removeTodo($event)">
-      </todos-table>
-
-      <div *ngIf="vm.error">
-        Error: {{ vm.error }}
-      </div>
-
-    </ng-container>
+    @if (store.error()) {
+    <div>Error: {{ store.error() }}</div>
+    } @else {
+    <todos-table
+      [todos]="store.data()"
+      [totalRows]="store.total()"
+      [loading]="store.loading()"
+      (pageChanged)="store.loadTodos($event)"
+      (sorted)="store.loadTodos({ sort: $event })"
+      (todoToggled)="store.updateTodo($event)"
+      (todoRemoved)="store.removeTodo($event)"
+    />
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    TodosTableComponent,
-    TodosFilterComponent,
-    AsyncPipe,
-    NgIf
-  ],
-  standalone: true
+  imports: [TodosTableComponent, TodosFilterComponent],
+  standalone: true,
 })
-export class ComponentStoreTodosComponent implements OnInit {
+export class ComponentStoreTodosComponent {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  store = inject(ComponentStoreTodosStore);
 
-  constructor(public store: ComponentStoreTodosStore) {}
+  private searchQueryParam$ = this.route.queryParams.pipe(
+    map(({ searchQuery }) => ({ searchQuery: (searchQuery || "") as string }))
+  );
 
-  ngOnInit() {
-    this.store.loadTodos({ pageSize: 10, pageIndex: 1 });
+  constructor() {
+    this.store.loadTodos(this.searchQueryParam$);
   }
 
+  setSearchParam(searchQuery: string) {
+    this.router.navigate([], {
+      queryParams: { searchQuery: searchQuery || null },
+      queryParamsHandling: "merge",
+    });
+  }
 }
