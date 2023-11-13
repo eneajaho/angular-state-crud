@@ -23,15 +23,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
       <table
-        [dataSource]="todos"
-        mat-table
         class="full-width-table"
+        [dataSource]="todos"
+        (matSortChange)="sorted.emit($event)"
+        mat-table
         aria-label="Todos"
-        matSort
-        (matSortChange)="sorted.emit($event)">
+        matSort>
         <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-          <td mat-cell *matCellDef="let row">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
+          <td *matCellDef="let row" mat-cell>
             @if (row.isChanging) {
               <mat-spinner diameter="20"></mat-spinner>
             } @else {
@@ -41,21 +41,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         </ng-container>
 
         <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-          <td mat-cell *matCellDef="let row">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
+          <td *matCellDef="let row" mat-cell>
             {{ row.title | truncate: 50 }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="user">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>User</th>
           <!--<td mat-cell *matCellDef="let row">{{ row.userId }}</td>-->
-          <td mat-cell *matCellDef="let row">John</td>
+          <td *matCellDef="let row" mat-cell>John</td>
         </ng-container>
 
         <ng-container matColumnDef="completed">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Completed</th>
-          <td mat-cell *matCellDef="let row">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Completed</th>
+          <td *matCellDef="let row" mat-cell>
             <mat-icon
               [style.color]="row.completed ? '#00bb00' : 'grey'"
               (click)="!row.isChanging ? todoToggled.emit(row) : ''">
@@ -65,24 +65,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         </ng-container>
 
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-          <td mat-cell *matCellDef="let row">
+          <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
+          <td *matCellDef="let row" mat-cell>
             <button
-              mat-stroked-button
-              color="warn"
               [disabled]="row.isChanging"
-              (click)="todoRemoved.emit(row.id)">
+              (click)="todoRemoved.emit(row.id)"
+              mat-stroked-button
+              color="warn">
               <mat-icon>delete</mat-icon>
               <span>Remove</span>
             </button>
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
         <tr
-          mat-row
+          *matRowDef="let row; columns: displayedColumns"
           [class.is-changing]="row.isChanging"
-          *matRowDef="let row; columns: displayedColumns"></tr>
+          mat-row></tr>
       </table>
 
       <mat-paginator
@@ -90,8 +90,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         [pageIndex]="0"
         [pageSize]="10"
         [showFirstLastButtons]="true"
-        (page)="pageChanged.emit($event)"
         [pageSizeOptions]="[5, 10, 20]"
+        (page)="pageChanged.emit($event)"
         aria-label="Select page">
       </mat-paginator>
     </div>

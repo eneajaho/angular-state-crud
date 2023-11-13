@@ -14,12 +14,12 @@ import { AsyncPipe } from '@angular/common';
   template: `
     <mat-sidenav-container class="sidenav-container">
       <mat-sidenav
-        #drawer
         class="sidenav"
-        fixedInViewport
+        #drawer
         [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="(isHandset$ | async) === false">
+        [opened]="(isHandset$ | async) === false"
+        fixedInViewport>
         <mat-toolbar>Menu</mat-toolbar>
         <mat-nav-list>
           <a mat-list-item routerLink="/">All todos</a>
@@ -30,10 +30,10 @@ import { AsyncPipe } from '@angular/common';
       <mat-sidenav-content>
         <mat-toolbar color="primary">
           <button
+            (click)="drawer.toggle()"
             type="button"
             aria-label="Toggle sidenav"
-            mat-icon-button
-            (click)="drawer.toggle()">
+            mat-icon-button>
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
           <span>Angular State Management Todo Examples</span>

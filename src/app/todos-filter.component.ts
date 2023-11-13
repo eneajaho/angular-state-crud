@@ -18,16 +18,16 @@ import { MatIconModule } from '@angular/material/icon';
       <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Search query</mat-label>
         <input
-          matInput
           [formControl]="searchControl"
+          matInput
           placeholder="Search todos..." />
       </mat-form-field>
 
       <button
+        (click)="filtered.emit(searchControl.value)"
         mat-raised-button
         color="primary"
-        type="button"
-        (click)="filtered.emit(searchControl.value)">
+        type="button">
         <mat-icon>search</mat-icon>
         <span>Search</span>
       </button>
