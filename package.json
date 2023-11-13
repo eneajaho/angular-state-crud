@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -20,17 +21,29 @@
     "@angular/platform-browser-dynamic": "^17.0.2",
     "@angular/router": "^17.0.2",
     "@ngrx/component-store": "^17.0.0-beta.0",
-    "@rx-angular/state": "^16.3.0",
     "@rx-angular/cdk": "^16.0.0",
+    "@rx-angular/state": "^16.3.0",
     "rxjs": "^7.8.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.0",
+    "@angular-eslint/builder": "17.0.1",
+    "@angular-eslint/eslint-plugin": "17.0.1",
+    "@angular-eslint/eslint-plugin-template": "17.0.1",
+    "@angular-eslint/schematics": "17.0.1",
+    "@angular-eslint/template-parser": "17.0.1",
     "@angular/cli": "^17.0.0",
     "@angular/compiler-cli": "^17.0.2",
     "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "6.10.0",
+    "@typescript-eslint/parser": "6.10.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.1.0",
+    "prettier-eslint": "^16.1.2",
     "typescript": "~5.2.2"
   }
 }
