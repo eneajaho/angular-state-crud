@@ -1,13 +1,10 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
+  "ignorePatterns": ["projects/**/*"],
+  "plugins": ["unused-imports"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
@@ -16,28 +13,11 @@
         "plugin:prettier/recommended"
       ],
       "rules": {
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "type": "attribute",
-            "prefix": "app",
-            "style": "camelCase"
-          }
-        ],
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "prefix": "app",
-            "style": "kebab-case"
-          }
-        ]
+        "unused-imports/no-unused-imports": "error"
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
+      "files": ["*.html"],
       "extends": [
         "plugin:@angular-eslint/template/recommended",
         "plugin:@angular-eslint/template/accessibility",

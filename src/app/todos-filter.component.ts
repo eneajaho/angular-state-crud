@@ -5,11 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import {
-  FormControl,
-  ReactiveFormsModule,
-  UntypedFormControl,
-} from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';

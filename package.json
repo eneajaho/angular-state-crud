@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "lint": "ng lint"
+    "lint": "ng lint --fix"
   },
   "private": true,
   "dependencies": {
@@ -42,6 +42,7 @@
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
     "prettier": "^3.1.0",
     "prettier-eslint": "^16.1.2",
     "typescript": "~5.2.2"
