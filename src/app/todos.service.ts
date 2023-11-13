@@ -1,8 +1,8 @@
-import { environment } from "../environments/environment";
-import { map, Observable } from "rxjs";
+import { environment } from '../environments/environment';
+import { map, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Todo } from "./todo.model";
+import { Todo } from './todo.model';
 import { Sort } from '@angular/material/sort';
 
 export interface GetTodosPayload {
@@ -14,8 +14,7 @@ export interface GetTodosPayload {
 
 @Injectable({ providedIn: 'root' })
 export class TodosService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   get(payload: Partial<GetTodosPayload>): Observable<Todo[]> {
     const path = `${environment.api}/todos`;
@@ -47,8 +46,8 @@ export class TodosService {
     const path = `${environment.api}/todos`;
     const payload = {
       userId: Math.floor(Math.random() * 200),
-      title: todo  + Math.floor(Math.random() * 200),
-      completed: false
+      title: todo + Math.floor(Math.random() * 200),
+      completed: false,
     };
     return this.http.post<Todo>(path, payload);
   }
@@ -62,5 +61,4 @@ export class TodosService {
     const path = `${environment.api}/todos/${todoId}`;
     return this.http.delete<unknown>(path).pipe(map(res => todoId));
   }
-
 }
