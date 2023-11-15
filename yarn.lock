@@ -2509,12 +2509,26 @@
     "@ngrx/operators" "17.0.0-beta.0"
     tslib "^2.0.0"
 
+"@ngrx/effects@^16.3.0":
+  version "16.3.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/effects/-/effects-16.3.0.tgz#ebc3508d9e41b9f7dfab6b28585a6e2461b7cdfa"
+  integrity sha512-QvN+jJFqBHH6x5eqtFVeMTcotoWMLTrDjK4wW61hmbYafGmBbEnIgikTsn2DSPA67io0DhgDtBHoBKnicy1gEw==
+  dependencies:
+    tslib "^2.0.0"
+
 "@ngrx/operators@17.0.0-beta.0":
   version "17.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/@ngrx/operators/-/operators-17.0.0-beta.0.tgz#030486f3a610fa919d2b155aad3bc7b4c708550d"
   integrity sha512-EbO8AONuQ6zo2v/mPyBOi4y0CTAp1x4Z+bx7ZF+Pd8BL5ma53BTCL1TmzaeK5zPUe0yApudLk9/ZbHXPnVox5A==
   dependencies:
     tslib "^2.3.0"
+
+"@ngrx/store@^16.3.0":
+  version "16.3.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/store/-/store-16.3.0.tgz#e1174438f8e05d7ddf8db4c38013515b1ac80796"
+  integrity sha512-aWQY41M7O0sMpTmM+OOPBPwKQWHhmkCStizFB1GdiGud8DU5fz0BdUiy6o2+feZypMzczqbwTnq+AxxxrWYqoA==
+  dependencies:
+    tslib "^2.0.0"
 
 "@ngtools/webpack@17.0.0":
   version "17.0.0"
