@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { rxState } from '@rx-angular/state';
-import { catchError, concatMap, map, mergeMap, of, switchMap } from 'rxjs';
+import { concatMap, map, mergeMap, Observable, tap } from 'rxjs';
 import { GetTodosPayload, TodosService } from '../todos.service';
 import { rxActions } from '@rx-angular/state/actions';
 import { insert, remove } from '@rx-angular/cdk/transformations';
 import { Todo } from '../todo.model';
+import { rxStateful$ } from '@angular-kit/rx-stateful';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export interface TodosState {
   data: Todo[];
@@ -42,26 +44,44 @@ export class RxStateTodosStore {
     removeTodo: number;
   }>();
 
-  state = rxState<TodosState>(({ set, connect, get, select }) => {
+  state = rxState<TodosState>(({ set, connect, get }) => {
     set(initialState);
 
+    const loadTodoRequest$ = rxStateful$<
+      Todo[],
+      Partial<GetTodosPayload>,
+      HttpErrorResponse
+    >(
+      payload =>
+        this.todosService.get({ ...get('params'), ...payload }).pipe(
+          tap(() => {
+            set(() => ({ params: { ...get('params'), ...payload } }));
+          }),
+        ),
+      {
+        sourceTriggerConfig: {
+          trigger: this.actions.loadTodos$,
+        },
+        errorMappingFn: (error: HttpErrorResponse) => error?.message,
+      },
+    );
+
+    const loading$: Observable<Partial<TodosState>> = loadTodoRequest$.pipe(
+      map(v => ({
+        loading: v.isSuspense,
+        loaded: !v.isSuspense,
+        error: (v.error as unknown as string) ?? null,
+      })),
+    );
+
+    connect(loading$);
     connect(
-      this.actions.loadTodos$.pipe(
-        switchMap(payload => {
-          set(s => ({ loading: true, loaded: false, error: null }));
-          const newPayload = { ...get('params'), ...payload };
-          return this.todosService.get(newPayload).pipe(
-            map((data: Todo[]) => ({
-              data,
-              error: null,
-              loading: false,
-              loaded: true,
-              params: newPayload,
-              total: 100,
-            })),
-            catchError(err => of({ error: err.message })),
-          );
-        }),
+      loadTodoRequest$.pipe(
+        map(v => ({
+          data: v.value ?? [],
+          error: null,
+          total: v.value?.length ?? 0,
+        })),
       ),
     );
 
@@ -120,4 +140,8 @@ export class RxStateTodosStore {
   error = this.state.signal('error');
   loading = this.state.signal('loading');
   searchQuery = this.state.computed(({ params }) => params().searchQuery || '');
+
+  constructor() {
+    this.state.select().subscribe(console.log);
+  }
 }
