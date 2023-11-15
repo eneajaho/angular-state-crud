@@ -7,6 +7,7 @@ import { insert, remove } from '@rx-angular/cdk/transformations';
 import { Todo } from '../todo.model';
 import { rxStateful$ } from '@angular-kit/rx-stateful';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface TodosState {
   data: Todo[];
@@ -36,6 +37,7 @@ const initialState: TodosState = {
 @Injectable({ providedIn: 'root' })
 export class RxStateTodosStore {
   private todosService = inject(TodosService);
+  private readonly snackbar = inject(MatSnackBar);
 
   actions = rxActions<{
     loadTodos: Partial<GetTodosPayload>;
@@ -62,7 +64,14 @@ export class RxStateTodosStore {
         sourceTriggerConfig: {
           trigger: this.actions.loadTodos$,
         },
-        errorMappingFn: (error: HttpErrorResponse) => error?.message,
+        // default is false, just want to show it
+        keepValueOnRefresh: false,
+        // default is false, just want to show it
+        keepErrorOnRefresh: false,
+        beforeHandleErrorFn: error =>
+          this.snackbar.open(`🤪 Error ${error?.message}`),
+        // automatic refetching
+        // refetchStrategies: [withAutoRefetch(1000, 10000)]
       },
     );
 
@@ -70,7 +79,7 @@ export class RxStateTodosStore {
       map(v => ({
         loading: v.isSuspense,
         loaded: !v.isSuspense,
-        error: (v.error as unknown as string) ?? null,
+        error: v.error?.message ?? null,
       })),
     );
 
