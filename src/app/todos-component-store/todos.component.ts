@@ -32,6 +32,7 @@ import { map } from 'rxjs';
 export class ComponentStoreTodosComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+
   store = inject(ComponentStoreTodosStore);
 
   private searchQueryParam$ = this.route.queryParams.pipe(

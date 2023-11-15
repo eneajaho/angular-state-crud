@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RxStateTodosStore } from './todos.store';
-import { TodosTableComponent } from '../todos-table.component';
+import { Router } from '@angular/router';
+import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { TodosFilterComponent } from '../todos-filter.component';
-import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { TodosTableComponent } from '../todos-table.component';
+import { RxStateTodosStore } from './todos.store';
 
 @Component({
   selector: 'todos',
@@ -31,16 +31,12 @@ import { map } from 'rxjs';
 })
 export class RxStateTodosComponent {
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
-  private searchQueryParam$ = this.route.queryParams.pipe(
-    map(({ searchQuery }) => ({ searchQuery: (searchQuery || '') as string })),
-  );
+  private searchQueryParam = injectQueryParams(p => p.searchQuery || '');
 
   store = inject(RxStateTodosStore);
 
   constructor() {
-    this.store.state.connect('params', this.searchQueryParam$);
+    this.store.state.connect('params', this.searchQueryParam);
     this.store.actions.loadTodos({ pageSize: 10, pageIndex: 1 });
   }
 
