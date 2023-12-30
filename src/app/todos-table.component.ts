@@ -8,19 +8,25 @@ import {
 import { Todo } from './todo.model';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { NgIf } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { TableColumnSettings } from './utils/table-columns-settings/table-columns-settings.component';
 import { TruncatePipe } from './truncate.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'todos-table',
   template: `
-    <div class="mat-elevation-z8">
-      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+    <div class="mat-elevation-z8" style="position: relative;">
+      @if (loading) {
+        <mat-progress-bar mode="indeterminate" />
+      }
+
+      <div style="position: absolute; right: 10px; top: 5px; z-index: 10">
+        <table-columns-settings [(columns)]="columns" />
+      </div>
 
       <table
         class="full-width-table"
@@ -33,7 +39,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
           <th *matHeaderCellDef mat-header-cell mat-sort-header>Id</th>
           <td *matCellDef="let row" mat-cell>
             @if (row.isChanging) {
-              <mat-spinner diameter="20"></mat-spinner>
+              <mat-spinner diameter="20" />
             } @else {
               {{ row.id }}
             }
@@ -78,9 +84,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
           </td>
         </ng-container>
 
-        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matHeaderRowDef="columns" mat-header-row></tr>
         <tr
-          *matRowDef="let row; columns: displayedColumns"
+          *matRowDef="let row; columns: columns"
           [class.is-changing]="row.isChanging"
           mat-row></tr>
       </table>
@@ -92,8 +98,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         [showFirstLastButtons]="true"
         [pageSizeOptions]="[5, 10, 20]"
         (page)="pageChanged.emit($event)"
-        aria-label="Select page">
-      </mat-paginator>
+        aria-label="Select page" />
     </div>
   `,
   styles: `
@@ -115,7 +120,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true,
   imports: [
     MatProgressBarModule,
-    NgIf,
     MatTableModule,
     MatSortModule,
     TruncatePipe,
@@ -123,9 +127,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    TableColumnSettings,
   ],
 })
-export class TodosTableComponent {
+export class TodosTable {
   @Input() todos: (Todo & { isChanging?: boolean })[] = [];
   @Input() totalRows = 0;
   @Input() loading = false;
@@ -136,6 +141,7 @@ export class TodosTableComponent {
   @Output() todoToggled = new EventEmitter<Todo>();
   @Output() todoRemoved = new EventEmitter<number>();
 
-  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'title', 'user', 'completed', 'actions'];
+  columns = ALL_COLUMNS;
 }
+
+const ALL_COLUMNS = ['id', 'title', 'user', 'actions', 'completed'];

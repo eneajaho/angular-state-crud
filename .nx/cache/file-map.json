@@ -1,0 +1,207 @@
+{
+  "version": "6.0",
+  "nxVersion": "17.0.3",
+  "deps": {
+    "@angular/animations": "^17.0.2",
+    "@angular/cdk": "17.0.0",
+    "@angular/common": "^17.0.2",
+    "@angular/compiler": "^17.0.2",
+    "@angular/core": "^17.0.2",
+    "@angular/forms": "^17.0.2",
+    "@angular/material": "17.0.0",
+    "@angular/platform-browser": "^17.0.2",
+    "@angular/platform-browser-dynamic": "^17.0.2",
+    "@angular/router": "^17.0.2",
+    "@ngrx/component-store": "^17.0.0-beta.0",
+    "@ngrx/effects": "^16.3.0",
+    "@ngrx/store": "^16.3.0",
+    "@rx-angular/cdk": "^16.0.0",
+    "@rx-angular/state": "^16.3.0",
+    "ngxtension": "^1.3.0",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.1",
+    "@angular-devkit/build-angular": "^17.0.0",
+    "@angular-eslint/builder": "17.0.1",
+    "@angular-eslint/eslint-plugin": "17.0.1",
+    "@angular-eslint/eslint-plugin-template": "17.0.1",
+    "@angular-eslint/schematics": "17.0.1",
+    "@angular-eslint/template-parser": "17.0.1",
+    "@angular/cli": "^17.0.0",
+    "@angular/compiler-cli": "^17.0.2",
+    "@types/node": "^12.11.1",
+    "@typescript-eslint/eslint-plugin": "6.10.0",
+    "@typescript-eslint/parser": "6.10.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.1.0",
+    "prettier-eslint": "^16.1.2",
+    "prettier-plugin-organize-attributes": "^1.0.0",
+    "typescript": "~5.2.2"
+  },
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {},
+    "nonProjectFiles": [
+      {
+        "file": ".eslintrc.json",
+        "hash": "8751546915653227010"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "17884450377372542257"
+      },
+      {
+        "file": ".nx/cache/file-map.json",
+        "hash": "16504646722158077031"
+      },
+      {
+        "file": ".nx/cache/lockfile.hash",
+        "hash": "7537969581177648778"
+      },
+      {
+        "file": ".nx/cache/parsed-lock-file.json",
+        "hash": "14306662465107108548"
+      },
+      {
+        "file": ".nx/cache/project-graph.json",
+        "hash": "6108367862603098667"
+      },
+      {
+        "file": ".prettierrc.json",
+        "hash": "14549435879036907433"
+      },
+      {
+        "file": "README.md",
+        "hash": "1482065677882934806"
+      },
+      {
+        "file": "angular.json",
+        "hash": "4519400949485524761"
+      },
+      {
+        "file": "package.json",
+        "hash": "17223464985773725813"
+      },
+      {
+        "file": "src/_redirects",
+        "hash": "12895008350551438899"
+      },
+      {
+        "file": "src/app/app.component.ts",
+        "hash": "17733429494765320236"
+      },
+      {
+        "file": "src/app/app.config.ts",
+        "hash": "4094310385660043660"
+      },
+      {
+        "file": "src/app/app.routes.ts",
+        "hash": "10663857337104680998"
+      },
+      {
+        "file": "src/app/todo.model.ts",
+        "hash": "17844944449947627209"
+      },
+      {
+        "file": "src/app/todos-component-store/todos.component.ts",
+        "hash": "4312550474545680984"
+      },
+      {
+        "file": "src/app/todos-component-store/todos.store.ts",
+        "hash": "11264441398520004032"
+      },
+      {
+        "file": "src/app/todos-filter.component.ts",
+        "hash": "17465847896683473953"
+      },
+      {
+        "file": "src/app/todos-ngrx-store/todos.actions.ts",
+        "hash": "11841399858093574625"
+      },
+      {
+        "file": "src/app/todos-ngrx-store/todos.component.ts",
+        "hash": "8234496905471578359"
+      },
+      {
+        "file": "src/app/todos-ngrx-store/todos.effects.ts",
+        "hash": "6784265740654504662"
+      },
+      {
+        "file": "src/app/todos-ngrx-store/todos.reducer.ts",
+        "hash": "18286997406957691042"
+      },
+      {
+        "file": "src/app/todos-ngrx-store/todos.state.ts",
+        "hash": "689991197446769583"
+      },
+      {
+        "file": "src/app/todos-ngrx-store/todos.store.ts",
+        "hash": "11264441398520004032"
+      },
+      {
+        "file": "src/app/todos-rx-state/todos.component.ts",
+        "hash": "15838867912051445634"
+      },
+      {
+        "file": "src/app/todos-rx-state/todos.store.ts",
+        "hash": "10075161829283532045"
+      },
+      {
+        "file": "src/app/todos-table.component.ts",
+        "hash": "5269495028290397970"
+      },
+      {
+        "file": "src/app/todos.service.ts",
+        "hash": "8362880165196167771"
+      },
+      {
+        "file": "src/app/truncate.pipe.ts",
+        "hash": "1190516541352278547"
+      },
+      {
+        "file": "src/assets/.gitkeep",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "src/environments/environment.prod.ts",
+        "hash": "16212939005867413526"
+      },
+      {
+        "file": "src/environments/environment.ts",
+        "hash": "7895934868777835876"
+      },
+      {
+        "file": "src/favicon.ico",
+        "hash": "3464744996580215640"
+      },
+      {
+        "file": "src/index.html",
+        "hash": "159003534909966506"
+      },
+      {
+        "file": "src/main.ts",
+        "hash": "10300702331445756274"
+      },
+      {
+        "file": "src/styles.scss",
+        "hash": "13986761543930197709"
+      },
+      {
+        "file": "tsconfig.app.json",
+        "hash": "493395513850126160"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "8806865754072081267"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "13088664584527018580"
+      }
+    ]
+  }
+}

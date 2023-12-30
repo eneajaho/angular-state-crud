@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { TodosFilterComponent } from '../todos-filter.component';
-import { TodosTableComponent } from '../todos-table.component';
+import { TodosTable } from '../todos-table.component';
 import { RxStateTodosStore } from './todos.store';
 
 @Component({
@@ -26,7 +26,7 @@ import { RxStateTodosStore } from './todos.store';
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TodosTableComponent, TodosFilterComponent],
+  imports: [TodosTable, TodosFilterComponent],
   standalone: true,
 })
 export class RxStateTodosComponent {

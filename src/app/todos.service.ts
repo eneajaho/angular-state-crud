@@ -59,6 +59,6 @@ export class TodosService {
 
   remove(todoId: number): Observable<number> {
     const path = `${environment.api}/todos/${todoId}`;
-    return this.http.delete<unknown>(path).pipe(map(res => todoId));
+    return this.http.delete<unknown>(path).pipe(map(() => todoId));
   }
 }

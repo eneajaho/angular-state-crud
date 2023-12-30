@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TodosTableComponent } from '../todos-table.component';
+import { TodosTable } from '../todos-table.component';
 import { TodosFilterComponent } from '../todos-filter.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
@@ -28,7 +28,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     } -->
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TodosTableComponent, TodosFilterComponent],
+  imports: [TodosTable, TodosFilterComponent],
   standalone: true,
 })
 export class NgrxStoreTodosComponent {

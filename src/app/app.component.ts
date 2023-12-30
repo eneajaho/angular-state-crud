@@ -25,6 +25,7 @@ import { AsyncPipe } from '@angular/common';
           <a mat-list-item routerLink="/">All todos</a>
           <a mat-list-item routerLink="/rx-state">RxState</a>
           <a mat-list-item routerLink="/component-store">Component Store</a>
+          <a mat-list-item routerLink="/ngxtension">Ngxtension</a>
         </mat-nav-list>
       </mat-sidenav>
       <mat-sidenav-content>

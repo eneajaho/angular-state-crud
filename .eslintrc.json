@@ -13,7 +13,8 @@
         "plugin:prettier/recommended"
       ],
       "rules": {
-        "unused-imports/no-unused-imports": "error"
+        "unused-imports/no-unused-imports": "error",
+        "@angular-eslint/component-class-suffix": 0
       }
     },
     {
