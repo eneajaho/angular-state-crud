@@ -18,13 +18,25 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TableColumnSettings } from '../utils/table-columns-settings/table-columns-settings.component';
 import { TruncatePipe } from '../truncate.pipe';
-
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'todos',
   template: `
-    <todos-filter
-      [searchValue]="store.searchQuery()"
-      (filtered)="setSearchParam($event)" />
+    <div
+      style="display: flex; justify-content: space-between; align-items: center">
+      <todos-filter
+        [searchValue]="store.searchQuery()"
+        (filtered)="setSearchParam($event)" />
+
+      <button
+        (click)="openAddTodoDialog()"
+        mat-raised-button
+        color="primary"
+        type="button">
+        <mat-icon>add</mat-icon>
+        Add todo
+      </button>
+    </div>
 
     @if (state.status === 'error') {
       <div>Error: {{ state.error }}</div>
@@ -112,6 +124,21 @@ import { TruncatePipe } from '../truncate.pipe';
       </div>
     }
   `,
+  styles: `
+     .full-width-table {
+        width: 100%;
+        overflow: hidden;
+      }
+
+      mat-icon {
+        cursor: pointer;
+      }
+
+      .is-changing {
+        background: #673ab73b;
+        transition: 0.25s background;
+      }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TodosFilterComponent,
@@ -130,6 +157,7 @@ import { TruncatePipe } from '../truncate.pipe';
 })
 export class NgxtensionTodosComponent {
   private router = inject(Router);
+  private modal = inject(MatDialog);
 
   searchQueryParam = injectQueryParams('searchQuery');
 
@@ -143,6 +171,21 @@ export class NgxtensionTodosComponent {
     effect(() => {
       const searchQuery = this.searchQueryParam() || '';
       untracked(() => this.store.setParams({ searchQuery }));
+    });
+  }
+
+  openAddTodoDialog(): void {
+    import('../add-todo.modal').then(({ AddTodoModal }) => {
+      const dialogRef = this.modal.open(AddTodoModal, {
+        width: '400px',
+        data: { title: '' },
+      });
+
+      dialogRef.afterClosed().subscribe((result: string | undefined) => {
+        console.log('The dialog was closed', result);
+        if (!result) return;
+        this.store.addTodo(result);
+      });
     });
   }
 

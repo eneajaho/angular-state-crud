@@ -13,6 +13,7 @@ import { Todo } from '../todo.model';
 import { TodosService } from '../todos.service';
 import { computedFrom } from 'ngxtension/computed-from';
 import { createEffect } from 'ngxtension/create-effect';
+import { connect } from 'ngxtension/connect';
 import { ApiCallState } from '../utils/api-call-state.model';
 import { Sort } from '@angular/material/sort';
 
@@ -28,8 +29,8 @@ interface GetParamsPayload {
 export class NgxtensionTodosStore {
   private todosService = inject(TodosService);
 
+  state = signal<ApiCallState<Todo[]>>({} as ApiCallState<Todo[]>);
   private isChanging = signal<number[]>([]);
-
   private params = signal<GetParamsPayload>({
     pageIndex: 1,
     pageSize: 10,
@@ -38,32 +39,30 @@ export class NgxtensionTodosStore {
     updateIndex: 0,
   });
 
-  setParams = (params: Partial<GetParamsPayload>) => {
-    this.params.update(p => ({ ...p, ...params }));
-  };
-
-  // @ts-ignore
-  state: Signal<ApiCallState<Todo[]>> = computedFrom(
+  private allTodosState: Signal<ApiCallState<Todo[]>> = computedFrom(
     [this.params],
     pipe(
       switchMap(([params]) => {
         return this.todosService.get(params).pipe(
-          startWith({ status: 'loading', result: [], total: 0 }),
-          map(res => {
-            console.log({ res });
-            // @ts-ignore
-            if (res['status'] && res.status === 'loading') return res;
-            return { status: 'loaded', result: res, total: 100 } as const;
-          }),
-          catchError(err => of({ status: 'error', error: err } as const)),
+          map(res => ({ status: 'loaded' as const, result: res, total: 100 })),
+          startWith({ status: 'loading' as const, result: [], total: 0 }),
+          catchError(err => of({ status: 'error' as const, error: err })),
         );
       }),
     ),
   );
 
+  constructor() {
+    connect(this.state, this.allTodosState);
+  }
+
+  setParams = (params: Partial<GetParamsPayload>) => {
+    this.params.update(p => ({ ...p, ...params }));
+  };
+
   data = computed(() => {
     const state = this.state();
-    if (state.status === 'loaded') {
+    if (state?.status === 'loaded') {
       return state.result.map(
         x =>
           ({
@@ -80,7 +79,14 @@ export class NgxtensionTodosStore {
   addTodo = createEffect<string>(
     pipe(
       concatMap(title =>
-        this.todosService.add(title).pipe(tap(() => this.refresh())),
+        this.todosService.add(title).pipe(
+          tap(todo => {
+            const state = this.state();
+            const todos = state.status === 'loaded' ? state.result : [];
+            todos.unshift(todo);
+            this.state.update(s => ({ ...s, result: [...todos] }));
+          }),
+        ),
       ),
     ),
   );
@@ -91,10 +97,21 @@ export class NgxtensionTodosStore {
       concatMap(todo =>
         this.todosService.toggle(todo).pipe(
           tap(() => {
+            const state = this.state();
+            const todos = state.status === 'loaded' ? state.result : [];
+
+            this.state.update(s => ({
+              ...s,
+              result: todos.map(item => ({
+                ...item,
+                completed:
+                  item.id === todo.id ? todo.completed : item.completed,
+              })),
+            }));
+
             this.isChanging.update(x => x.filter(id => id !== todo.id));
-            if (this.isChanging().length === 0) {
-              this.refresh();
-            }
+
+            console.log(this.isChanging().length, todos.length);
           }),
         ),
       ),
@@ -107,8 +124,17 @@ export class NgxtensionTodosStore {
       concatMap(todoId =>
         this.todosService.remove(todoId).pipe(
           tap(() => {
+            const state = this.state();
+            const todos = state.status === 'loaded' ? state.result : [];
+
+            this.state.update(s => ({
+              ...s,
+              result: todos.filter(x => x.id !== todoId),
+            }));
+
             this.isChanging.update(x => x.filter(id => id !== todoId));
-            if (this.isChanging().length === 0) {
+
+            if (todos.length === 2) {
               this.refresh();
             }
           }),
